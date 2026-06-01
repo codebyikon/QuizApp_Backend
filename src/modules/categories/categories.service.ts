@@ -1,13 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Category, CategoryDocument } from './schemas/category.schema';
+import { Assessment, AssessmentDocument } from '../assessments/schemas/assessment.schema';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Injectable()
 export class CategoriesService {
-    constructor(@InjectModel(Category.name) private categoryModel: Model<CategoryDocument>) { }
+    constructor(
+        @InjectModel(Category.name) private categoryModel: Model<CategoryDocument>,
+        @InjectModel(Assessment.name) private assessmentModel: Model<AssessmentDocument>
+    ) { }
 
     async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
         const createdCategory = new this.categoryModel(createCategoryDto);
@@ -38,6 +42,11 @@ export class CategoriesService {
     }
 
     async remove(id: string): Promise<Category> {
+        const linkedAssessments = await this.assessmentModel.countDocuments({ categoryId: id });
+        if (linkedAssessments > 0) {
+            throw new ConflictException(`Cannot delete category because it is used by ${linkedAssessments} assessment(s). Please delete the assessments first.`);
+        }
+
         const deletedCategory = await this.categoryModel.findByIdAndDelete(id).exec();
         if (!deletedCategory) {
             throw new NotFoundException(`Category with ID ${id} not found`);

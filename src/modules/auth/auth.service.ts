@@ -26,7 +26,7 @@ export class AuthService {
         if (!user) {
             throw new UnauthorizedException('Invalid credentials');
         }
-        const payload = { email: user.email, sub: user._id, role: user.role };
+        const payload = { email: user.email, sub: user._id, role: user.role, class_level: user.class_level };
         return {
             access_token: this.jwtService.sign(payload),
             user,
@@ -41,6 +41,7 @@ export class AuthService {
         const hashedPassword = await bcrypt.hash(registerDto.password, 10);
         const user = await this.usersService.create({
             ...registerDto,
+            role: 'student', // Force student role for public registrations
             password: hashedPassword,
         });
         const { password, ...result } = user.toObject();

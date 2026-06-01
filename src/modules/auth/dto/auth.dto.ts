@@ -24,4 +24,12 @@ export class RegisterDto {
     @IsOptional()
     @IsEnum(['student', 'admin'])
     role?: 'student' | 'admin';
+
+    @IsOptional()
+    @IsEnum(['male', 'female'])
+    sex?: 'male' | 'female';
+
+    @IsOptional()
+    @IsEnum(['NCE I', 'NCE II', 'NCE III'])
+    class_level?: 'NCE I' | 'NCE II' | 'NCE III';
 }

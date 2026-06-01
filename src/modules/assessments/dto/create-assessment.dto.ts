@@ -1,4 +1,4 @@
-import { IsString, IsArray, IsNumber, IsOptional, IsMongoId, ValidateNested, ArrayMinSize, Min, Max } from 'class-validator';
+import { IsString, IsArray, IsNumber, IsOptional, IsMongoId, ValidateNested, ArrayMinSize, Min, Max, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class QuestionDto {
@@ -32,4 +32,8 @@ export class CreateAssessmentDto {
     @IsNumber()
     @Min(1)
     duration?: number;
+
+    @IsString()
+    @IsEnum(['NCE I', 'NCE II', 'NCE III'])
+    class_level: 'NCE I' | 'NCE II' | 'NCE III';
 }

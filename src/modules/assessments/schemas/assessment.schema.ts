@@ -27,6 +27,9 @@ export class Assessment {
 
     @Prop()
     duration: number; // in minutes
+
+    @Prop({ required: true, enum: ['NCE I', 'NCE II', 'NCE III'] })
+    class_level: string;
 }
 
 export const AssessmentSchema = SchemaFactory.createForClass(Assessment);

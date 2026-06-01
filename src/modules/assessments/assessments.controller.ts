@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, Query, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AssessmentsService } from './assessments.service';
 import { CreateAssessmentDto } from './dto/create-assessment.dto';
@@ -25,11 +25,8 @@ export class AssessmentsController {
     @Get()
     @ApiOperation({ summary: 'List all assessments or filter by category' })
     @ApiQuery({ name: 'categoryId', required: false, description: 'Filter by category ID' })
-    findAll(@Query('categoryId') categoryId?: string) {
-        if (categoryId) {
-            return this.assessmentsService.findByCategory(categoryId);
-        }
-        return this.assessmentsService.findAll();
+    findAll(@Req() req: any, @Query('categoryId') categoryId?: string) {
+        return this.assessmentsService.findAllFiltered(req.user, categoryId);
     }
 
     @Get(':id')

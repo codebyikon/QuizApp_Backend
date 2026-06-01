@@ -18,6 +18,17 @@ export class AssessmentsService {
         return this.assessmentModel.find().populate('categoryId').exec();
     }
 
+    async findAllFiltered(user: any, categoryId?: string): Promise<Assessment[]> {
+        const query: any = {};
+        if (categoryId) {
+            query.categoryId = categoryId;
+        }
+        if (user.role === 'student') {
+            query.class_level = user.class_level;
+        }
+        return this.assessmentModel.find(query).populate('categoryId').exec();
+    }
+
     async findOne(id: string): Promise<Assessment> {
         const assessment = await this.assessmentModel.findById(id).populate('categoryId').exec();
         if (!assessment) {
